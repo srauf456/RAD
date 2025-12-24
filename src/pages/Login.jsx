@@ -8,7 +8,7 @@ function Login(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const {isLoggedIn, loginWithGoogle} = useDashboardContext();
+    const {isLoggedIn, loginWithGoogle, continueAsGuest} = useDashboardContext();
  useEffect(()=>{
         if(isLoggedIn) navigate("/dashboard");
     }, [isLoggedIn]);
@@ -30,18 +30,19 @@ const handleSubmit = async (e) =>{
     }
 };
 
-  
+ 
     return (
-        <div className="flex rounded shadow-xl">
-            <form onSubmit={handleSubmit} className="m-6 p-2 gap-6 flex justify-center items-center flex-col">
+        
+            <form onSubmit={handleSubmit} className="m-6 p-2 gap-6 flex justify-center items-center flex-col shadow-gray-200 shadow-md">
             <h2 className="text-3xl">{isRegister ? "Register" : "Login"}</h2>
             <input className="border p-2" type="email" value={email} placeholder="Email" onChange={(e)=> setEmail(e.target.value)} required/>
             <input className="border p-2" type="password" value={password} placeholder="Password" onChange={(e)=> setPassword(e.target.value)} required/>
             <button type="submit" className="rounded text-xl mt-6 px-3 py-1">{isRegister? "Create Account": "Login"}</button>
             <button onClick={loginWithGoogle} className="rounded hover:bg-green-300">Login with Google</button>
-            <p onClick={(e) => setIsRegister(!isRegister)} className="cursor-pointer">{isRegister ? "Already have an account? Login" : "Don't have an account? Register"}</p>
+            <p onClick={() => setIsRegister(!isRegister)} className="cursor-pointer">{isRegister ? "Already have an account? Login" : "Don't have an account? Register"}</p>
+            <button className="rounded text-xl mt-6 px-3 py-1" onClick={continueAsGuest}>Continue As Guest</button>
             </form>
-        </div>
+       
     );
 }
 export default Login;

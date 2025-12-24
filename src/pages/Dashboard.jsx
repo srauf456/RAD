@@ -4,13 +4,13 @@ import PieChart from "../components/PieChart";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import Spinner from "../components/Spinner";
-import { useDashboardContext } from "../context/DashboardContext";
 
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { useDashboardContext } from "../context/DashboardContext";
 
 
 
@@ -20,11 +20,11 @@ import {
 
 function Dashboard(){
     const [user, setUser] = useState([]);
-    const [visitorData, setVisitorData] = useState([]);
+   const {visitorData, setVisitorData} = useDashboardContext();
     const [departments, setDepartments] = useState([]);
      const [loading, setLoading] = useState(true); // To indicate loading status
     const [error, setError] = useState(null); // To store any error messages
-    //const {theme} = useDashboardContext();
+    
 
 
     useEffect(() =>{
@@ -50,14 +50,15 @@ function Dashboard(){
        setLoading(false);
     }, 1500);
     
-      } catch(error){
-        setError("Failed to fetch", error);
+      } catch(err){
+        setError("Failed to fetch",err.message);
         setLoading(false);
       } 
-      //   console.log(departments);
+        
         }; 
         fetchData();
-    }, []);
+    }, [setVisitorData]);
+    if(error) alert("Error incurred:", error);
     return (
   <div>
     <h2 className="text-xl font-bold">Growth Overview</h2>
@@ -66,10 +67,13 @@ function Dashboard(){
         <Spinner/>
     ) : ( 
      
-     <div className="flex flex-wrap gap-16 mt-8 sm:flex-row">  
+     <div className="flex flex-wrap gap-16 mt-8 sm:flex justify-center">  
     <div className="flex flex-col gap-16 w-80 ">
-    <Card title="Total Users" value={user.length}/>
-     <Card title="Signups" value="323"/>
+     <HoverCard>
+        <HoverCardTrigger>
+        <HoverCardContent>Total Users</HoverCardContent> <Card title="Total Users" value={user.length}/></HoverCardTrigger> 
+        </HoverCard> 
+     <Card title="Signups" value="32"/>
       <Card title="Revenue" value="3200"/>
       </div>
    
@@ -77,26 +81,29 @@ function Dashboard(){
       
       <div className="h-80"> 
           <h2 className="font-semibold text-lg">Site Visitors</h2>
+          {visitorData && visitorData.length > 0 ? (
+             
     <LineChart labels={['January', 'February', 'March', 'April', 'May', 'June', 'July',
         'August', 'September', 'October', 'November', 'December']} dataPoints={visitorData}/>
-    {/* <Doughnut data={...} /> */}
+   ):(
+   <p>Loading data</p>
+   )}
+   
     </div>
     
 
-    <div className="rounded shadow bg-white mt-16">
+    <div className="h-80 mt-16">
       <h2 className="font-semibold text-lg">Department Distribution</h2>
     
-       
+   
+    
     <PieChart labels={Object.keys(departments)} dataPoints={Object.values(departments)}/>
-    {/* <Doughnut data={...} /> */}
+      
    
     </div>
     </div>
         </div>)} 
-        <HoverCard>
-        <HoverCardTrigger>Hover over me</HoverCardTrigger>
-        <HoverCardContent>This is the content of the hover card.</HoverCardContent>
-      </HoverCard>
+        
         </div>
 )}
 export default Dashboard;

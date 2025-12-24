@@ -1,29 +1,18 @@
-import {Link, NavLink} from "react-router-dom"
+import {NavLink} from "react-router-dom"
 import { MdDashboard, MdAnalytics, MdOutlinePerson, MdOutlineSettings, MdSpaceDashboard } from "react-icons/md";
 import { useDashboardContext } from "../context/DashboardContext";
-import { signOut } from "firebase/auth";
-import {auth} from "../firebase";
 import { useNavigate } from "react-router-dom";   
 import { MdMenu } from "react-icons/md";
 function Sidebar(){
-    const {theme, toggleTheme, isLoggedIn, userInfo, loginUser, logoutUser, language, changeLanguage, isSidebarOpen, setSidebarOpen} = useDashboardContext();
-//    const handleLogin = (e) =>{
-// const dummyUser = {
-//     name: "Sara",
-//     email: "sara@example.com",
-// };
-// //console.log("Login clicked");
-// loginUser(dummyUser);
-//    }
-const navigate = useNavigate();
+    const {theme, toggleTheme, isLoggedIn, logoutUser,  changeLanguage, isSidebarOpen} = useDashboardContext();
+    const navigate = useNavigate();
 
-const toggleSidebar = () =>{
-    setSidebarOpen(!isSidebarOpen);
-};
+// const toggleSidebar = () =>{
+//     setSidebarOpen(prev => !prev);
+// };
     return(
-        <div className={`w-64 h-screen fixed left-0 top-16 md:h-screen bg-gray-700 overflow-y-auto shadow transition-transform duration-300
-            ${isSidebarOpen? 'translate-x-0' : '-translate-x-full'}  md:translate-x-0 z-50`}>
-        {/* <button onClick={toggleSidebar} className="md:hidden  mt-8 bg-transparent text-black">X</button> */}
+        <div className={`w-64 fixed h-screen left-0 top-16 z-50 bg-gray-700 overflow-y-auto shadow transition-transform duration-300
+            ${isSidebarOpen? 'translate-x-0' : '-translate-x-full'}  md:translate-x-0`}>
                 
             <div className="flex gap-10 items-center justify-center">
                  
@@ -36,8 +25,8 @@ const toggleSidebar = () =>{
            
           
             <button onClick={() => changeLanguage("en")} >EN</button>
-          <button onClick={() => changeLanguage("ar")} >AR</button>
-          </div> 
+            <button onClick={() => changeLanguage("ar")} >AR</button>
+                </div> 
      <nav className="flex flex-col gap-4 p-4 mt-10">
     <NavLink to="/dashboard" className={({isActive}) =>
     `flex gap-2 p-2 items-center hover:bg-gray-600 rounded ${isActive ? "bg-gray-900 text-green-300" : "text-gray-300"}`}><MdDashboard/>Dashboard</NavLink>
@@ -47,7 +36,7 @@ const toggleSidebar = () =>{
     `flex gap-2 p-2 items-center hover:bg-gray-600 rounded ${isActive ? "bg-gray-900 text-green-300" : "text-gray-300"}`}><MdOutlinePerson/>Users</NavLink>
     <NavLink to="/settings" className={({isActive}) =>
     `flex gap-2 p-2 items-center hover:bg-gray-600 rounded ${isActive ? "bg-gray-900 text-green-300" : "text-gray-300"}`}><MdOutlineSettings/>Settings</NavLink>
-     {/*loginlogout*/}
+     
      {isLoggedIn ? (
         <div>
          

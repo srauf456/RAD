@@ -17,14 +17,12 @@ function App() {
 
 
   return (
-  <div className={theme === "dark" ? "bg-gray-800 text-white min-h-screen" : "bg-white text-black  min-h-screen"}>
- <div className='flex h-screen'>
+  <div className={`flex min-h-screen w-full overflow-x-hidden ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+ 
 <Sidebar/>
- <div className='flex-1 flex flex-col'>
+ <main className='flex-1 md:ml-64'>
 <Header /> 
 
-  <main className='flex-1 flex w-full max-w-screen'>
-   
       <Routes>
       <Route path='/dashboard' element={<ProtectedRoute><Content><Dashboard/></Content></ProtectedRoute>}/>
      <Route path='/analytics' element={<ProtectedRoute><Content ><Analytics/></Content></ProtectedRoute>}/>
@@ -32,13 +30,10 @@ function App() {
        <Route path='/settings' element={<ProtectedRoute><Content><Settings/></Content></ProtectedRoute>}/>
         <Route path='/users' element={<ProtectedRoute allowedRoles={['admin']}><Content><Users/></Content></ProtectedRoute>}/>
     </Routes>
- 
-    </main>
-    </div>
+</main> 
     </div>
     
    
-  </div>
   )
 }
 

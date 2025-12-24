@@ -1,9 +1,10 @@
 import { createContext, useContext, useState } from "react";
 //change manual setting login state to firebase auth state
 import {auth} from "../firebase";
-import { onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useEffect } from "react";
 import {useNavigate } from "react-router-dom";
+
 
 const DashboardContext = createContext();
 
@@ -21,7 +22,8 @@ export function DashboardProvider({children}){
     const [userInfo, setUserInfo] = useState(null);
     const [role, setRole] = useState(null);
     const navigate =  useNavigate();
-    
+    const [visitorData, setVisitorData] = useState([]);
+    const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
     const [language, setLanguage] = useState("en");
 
@@ -31,16 +33,43 @@ export function DashboardProvider({children}){
     //for sidebar toggle
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
+    //for tracking activities
+    const [activities, setActivities] = useState([]);
+
     //define methods
     const toggleTheme = () =>{
         setTheme((prev) => (prev === "light" ? "dark" : "light"));
     };
 
+    //guest
+    const continueAsGuest = () =>{
+    localStorage.setItem("guest", "true");
+    setIsLoggedIn(true);
+    setUserInfo({
+    name: "Guest User",
+    email: null,
+    uid: "guest",
+  });
+
+  setRole("user");
+
+  addActivity({
+  action: "Guest Access",
+  text: "Guest user entered dashboard",
+  type: "guest",
+});
+
+};
+    
+  
     //login
+
+    
 
     useEffect(() =>{
         //listerner for auth changes
         const unsubscribe = onAuthStateChanged(auth, async (user) =>{
+            //logged in
             if(user){
                 setIsLoggedIn(true);
                 setUserInfo({
@@ -48,28 +77,55 @@ export function DashboardProvider({children}){
                     email : user.email,
                     uid: user.uid,
                 });
-            
-
+                addActivity({
+                    action: "User logged in",
+                    text: `${user.displayName || user.email} logged in`,
+                    type: "login",
+                });
             try{
-                const res = await fetch("https://dummyjson.com/users?limit=10");
+                if (user.email === ADMIN_EMAIL) {
+                setRole("admin");
+                } else{
+                const res = await fetch("https://dummyjson.com/users?limit=15");
                 const apiUsers = await res.json();
                 const matchedUser = apiUsers.users.find((u) => u.email === user.email);
                 //set admin for testing
-                if(user.email === "srauf456@gmail.com"){
-                    setRole("admin");
-                } else{
-                    setRole(matchedUser?.role || "user");
-                }
+                if(matchedUser?.role){
+                setRole(matchedUser.role);
             }
-            catch(error){
-                console.log("Error fetching user role:", error);
+            else{
                 setRole("user");
             }
-        } else {
+        }
+    }
+            catch(error){
+                console.log("Error fetching user role:", error);
+            }
+            
+        } else{
+        const isGuest = localStorage.getItem("guest");
+        if(isGuest){
+            setIsLoggedIn(true);
+            setUserInfo({
+                name: "Guest user",
+                email:null,
+                uid: "guest",
+            });
+            setRole("user");
+            
+            
+        }
+        
+        else{
             setIsLoggedIn(false);
             setUserInfo(null);
+            setRole(null);
         }
+        
+    }
+        
     });
+    
         return () => unsubscribe();
     }, []);
     
@@ -98,8 +154,19 @@ export function DashboardProvider({children}){
  
     const changeLanguage = (lang) =>{
         setLanguage(lang);
-       // console.log(lang);
     };
+
+    //helper function for activites
+    const addActivity = (activity) => {
+  setActivities((prev) => [
+    {
+      id: Date.now(),
+      time: new Date().toLocaleTimeString(),
+     ...activity,
+    },
+    ...prev,
+  ]);
+};
 
     //context values
     const value = {
@@ -116,7 +183,12 @@ export function DashboardProvider({children}){
         setGlobalMessage,
         loginWithGoogle,
         isSidebarOpen,
-        setSidebarOpen
+        setSidebarOpen,
+        visitorData,
+        setVisitorData,
+        continueAsGuest,
+        activities, 
+        addActivity,
     };
 
     return (

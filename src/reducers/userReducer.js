@@ -6,21 +6,8 @@ export const initialState = {
 
 
 
-// 2️⃣ Connect it to your Users page
-
 // Replace useState for users with useReducer
 
-// Fetch and dispatch SET_USERS on mount
-
-// Add a dummy "Add User" button that dispatches ADD_USER with hardcoded data for now
-
-// 3️⃣ Confirm reducer works
-
-// See add/delete/toggle actions happen via dummy buttons
-
-// 4️⃣ Later plug in a form
-
-// Once your reducer logic is rock solid
 
 // Form will simply dispatch ADD_USER with form values
 
@@ -38,7 +25,14 @@ export const userReducer = (state, action) => {
         case "ADD_USER":
             return {
                 ...state,
-                users: [...state.users, action.payload ]
+                users: [...state.users,
+                    { ...action.payload,
+                company: {
+                    department: action.payload.department
+                }
+            }
+        ]
+            
             };
 
         case "DELETE_USER":

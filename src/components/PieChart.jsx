@@ -1,8 +1,11 @@
 import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, plugins } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useDashboardContext } from "../context/DashboardContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 function PieChart({labels, dataPoints}){
+   const {theme} = useDashboardContext();
+      var tickColor = theme === "dark" ? "white" : "black";
     const data = {
   labels: labels,
   datasets: [
@@ -42,11 +45,12 @@ const options = {
     responsive: true,
     plugins: {
         legend: {
-            position: "right",
+            position: "bottom",
+            labels: { color: tickColor },
         },
     },
 };
-return <Pie data={data} options={options} height={380}/>
+return <Pie data={data} options={options} height={300}/>
 }
 
 export default PieChart;
