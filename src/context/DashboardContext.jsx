@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 //change manual setting login state to firebase auth state
 import {auth} from "../firebase";
-import { onAuthStateChanged, GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { useEffect } from "react";
 import {useNavigate } from "react-router-dom";
 
@@ -60,7 +60,8 @@ export function DashboardProvider({children}){
 });
 
 };
-    
+    //handle redirect
+
   
     //login
 
@@ -143,8 +144,8 @@ export function DashboardProvider({children}){
     const loginWithGoogle = async () =>{
         const provider = new GoogleAuthProvider();
         try{
-            const result = await signInWithRedirect(auth, provider);
-            console.log("Logged in as:", result.user.displayName);
+            await signInWithRedirect(auth, provider);
+           
         } catch(error){
             console.log("Google auth failed:", error);
             alert("Login failed. Try again.");
