@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 //change manual setting login state to firebase auth state
 import {auth} from "../firebase";
-import { onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut } from "firebase/auth";
 import { useEffect } from "react";
 import {useNavigate } from "react-router-dom";
 
@@ -61,7 +61,17 @@ export function DashboardProvider({children}){
 
 };
     //handle redirect
-
+    useEffect(() =>{
+        getRedirectResult(auth)
+        .then((result) => {
+            if(result?.user) {
+                console.log("Redirect success", result.user.email);
+            }
+        })
+        .catch((error) => {
+            console.log("Redirect login error: ", error);
+        })
+    }, []);
   
     //login
 
@@ -135,7 +145,8 @@ export function DashboardProvider({children}){
             setIsLoggedIn(true);
     };
 
-    const logoutUser = () => {
+    const logoutUser = async () => {
+        await signOut(auth);
         setUserInfo(null);
         setIsLoggedIn(false);
         navigate("/login");
