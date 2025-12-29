@@ -43,7 +43,7 @@ export function DashboardProvider({children}){
 
     //guest
     const continueAsGuest = () =>{
-    localStorage.setItem("guest", "true");
+    sessionStorage.setItem("guest", "true");
     setIsLoggedIn(true);
     setUserInfo({
     name: "Guest User",
@@ -114,7 +114,7 @@ export function DashboardProvider({children}){
             }
             
         } else{
-        const isGuest = localStorage.getItem("guest");
+        const isGuest =sessionStorage.getItem("guest");
         if(isGuest){
             setIsLoggedIn(true);
             setUserInfo({
@@ -147,9 +147,10 @@ export function DashboardProvider({children}){
 
     const logoutUser = async () => {
         await signOut(auth);
+        sessionStorage.removeItem("guest");
         setUserInfo(null);
         setIsLoggedIn(false);
-        navigate("/login");
+        navigate("/");
     };
 
     const loginWithGoogle = async () =>{

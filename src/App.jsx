@@ -24,7 +24,7 @@ function App() {
 <Header /> 
 
       <Routes>
-      <Route path="/" element={isLoggedIn? <Navigate to ="/dashboard"/> : <Login />} />
+      <Route path="/" element={<Content><Login /></Content>} />
       <Route path='/dashboard' element={<ProtectedRoute><Content><Dashboard/></Content></ProtectedRoute>}/>
      <Route path='/analytics' element={<ProtectedRoute><Content ><Analytics/></Content></ProtectedRoute>}/>
       <Route path='/login' element={isLoggedIn? <Navigate to="/dashboard"/> : <Content><Login/></Content>}/>
